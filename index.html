@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn, .btn, .form-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .nav-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .nav-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn:hover, .form-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            min-height: 500px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item, .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            margin: 10px 5px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #ccc;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .popup.show {
+            display: flex;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .welcome-section h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .login-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .login-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .login-card h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .error {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .success {
+            color: #4CAF50;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .chart-link {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff6b6b;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 999;
+        }
+
+        .chart-link:hover {
+            background: #ff5252;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .welcome-section h1 {
+                font-size: 2em;
+            }
+            
+            .login-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#" class="chart-link" onclick="showPage('flowchart')">📊 Flow Chart</a>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎉 Event Management System</div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#" class="nav-btn" onclick="showPage('index')" id="homeLink">Home</a>
+                <a href="#" class="nav-btn" onclick="logout()" id="logoutLink" style="display: none;">Logout</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- INDEX PAGE -->
+            <div id="index" class="page active">
+                <div class="welcome-section">
+                    <h1>Welcome to Event Management System</h1>
+                    <p>Your one-stop solution for managing events, vendors, and bookings</p>
+                    
+                    <div class="login-options">
+                        <div class="login-card">
+                            <h3>👨‍💼 Admin Portal</h3>
+                            <p>Manage users, vendors, and system settings</p>
+                            <button class="btn btn-primary" onclick="showPage('adminLogin')">Admin Login</button>
+                        </div>
+                        
+                        <div class="login-card">
+                            <h3>🏪 Vendor Portal</h3>
+                            <p>Manage your products and services</p>
+                            <button class="btn btn-secondary" onclick="showPage('vendorLogin')">Vendor Login</button>
+                            <button class="btn btn-secondary" onclick="showPage('vendorSignup')">Vendor Signup</button>
+                        </div>
+                        
+                        <div class="login-card">
+                            <h3>👤 User Portal</h3>
+                            <p>Book events and manage your orders</p>
+                            <button class="btn btn-primary" onclick="showPage('userLogin')">User Login</button>
+                            <button class="btn btn-primary" onclick="showPage('userSignup')">User Signup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FLOW CHART PAGE -->
+            <div id="flowchart" class="page">
+                <h2>System Flow Chart</h2>
+                <div style="text-align: center; padding: 20px;">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIFN0YXJ0IC0tPgogIDxyZWN0IHg9IjM1MCIgeT0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iNDAiIGZpbGw9IiM2NjdlZWEiIHJ4PSIyMCIvPgogIDx0ZXh0IHg9IjQwMCIgeT0iNDUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjE0Ij5TVEFSVDwvdGV4dD4KICA8IS0tIEluZGV4IC0tPgogIDxyZWN0IHg9IjM1MCIgeT0iMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjNENBRjUwIiByeD0iNSIvPgogIDx0ZXh0IHg9IjQwMCIgeT0iMTI1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxNCI+SU5ERVg8L3RleHQ+CiAgPCEtLSBMb2dpbiAtLT4KICA8cmVjdCB4PSIzNTAiIHk9IjE4MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI0MCIgZmlsbD0iIzIxOTZGMyIgcng9IjUiLz4KICA8dGV4dCB4PSI0MDAiIHk9IjIwNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMTQiPkxPR0lOPC90ZXh0PgogIDwhLS0gQWRtaW4gLS0+CiAgPHJlY3QgeD0iNTAiIHk9IjI2MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2ZmNjk1OCIgcng9IjUiLz4KICA8dGV4dCB4PSIxMDAiIHk9IjI4NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMTQiPkFETUlOPC90ZXh0PgogIDwhLS0gVmVuZG9yIC0tPgogIDxyZWN0IHg9IjM1MCIgeT0iMjYwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZmY5ODAwIiByeD0iNSIvPgogIDx0ZXh0IHg9IjQwMCIgeT0iMjg1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxNCI+VkVORE9SPC90ZXh0PgogIDwhLS0gVXNlciAtLT4KICA8cmVjdCB4PSI2NTAiIHk9IjI2MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSI0MCIgZmlsbD0iIzllYzQwMSIgcng9IjUiLz4KICA8dGV4dCB4PSI3MDAiIHk9IjI4NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMTQiPlVTRVI8L3RleHQ+CiAgPCEtLSBBcnJvd3MgLS0+CiAgPGxpbmUgeDE9IjQwMCIgeTE9IjYwIiB4Mj0iNDAwIiB5Mj0iMTAwIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI0MDAiIHkxPSIxNDAiIHgyPSI0MDAiIHkyPSIxODAiIHN0cm9rZT0iIzMzMyIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGxpbmUgeDE9IjQwMCIgeTE9IjIyMCIgeDI9IjEwMCIgeTI9IjI2MCIgc3Ryb2tlPSIjMzMzIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8bGluZSB4MT0iNDAwIiB5MT0iMjIwIiB4Mj0iNDAwIiB5Mj0iMjYwIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMiIvPgogIDxsaW5lIHgxPSI0MDAiIHkxPSIyMjAiIHgyPSI3MDAiIHkyPSIyNjAiIHN0cm9rZT0iIzMzMyIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPCEtLSBBcnJvd2hlYWRzIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iNDAwLDEwMCA0MDUsOTUgMzk1LDk1IiBmaWxsPSIjMzMzIi8+CiAgPHBvbHlnb24gcG9pbnRzPSI0MDAsMTgwIDQwNSwxNzUgMzk1LDE3NSIgZmlsbD0iIzMzMyIvPgogIDx0ZXh0IHg9IjQwMCIgeT0iNDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjE2IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzY2N2VlYSI+RXZlbnQgTWFuYWdlbWVudCBTeXN0ZW0gRmxvdzwvdGV4dD4KICA8dGV4dCB4PSI0MDAiIHk9IjQyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzY2NiI+QWRtaW46IE1haW50ZW5hbmNlLCBSZXBvcnRzLCBUcmFuc2FjdGlvbnM8L3RleHQ+CiAgPHRleHQgeD0iNDAwIiB5PSI0MzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPlZlbmRvcjogUHJvZHVjdCBNYW5hZ2VtZW50PC90ZXh0PgogIDx0ZXh0IHg9IjQwMCIgeT0iNDUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNjY2Ij5Vc2VyOiBTaG9wcGluZyAmIE9yZGVycyA8L3RleHQ+Cjwvc3ZnPg==" alt="System Flow Chart" style="max-width: 100%; height: auto;"/>
+                </div>
+            </div>
+
+            <!-- ADMIN LOGIN -->
+            <div id="adminLogin" class="page">
+                <h2>👨‍💼 Admin Login</h2>
+                <form onsubmit="handleAdminLogin(event)">
+                    <div class="form-group">
+                        <label for="adminEmail">Email:</label>
+                        <input type="email" id="adminEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPassword">Password:</label>
+                        <input type="password" id="adminPassword" required>
+                    </div>
+                    <button type="submit" class="form-btn">Login</button>
+                    <div id="adminLoginError" class="error"></div>
+                </form>
+            </div>
+
+            <!-- ADMIN HOME -->
+            <div id="adminHome" class="page">
+                <h2>👨‍💼 Admin Dashboard</h2>
+                <div class="card-grid">
+                    <div class="card">
+                        <h3>👥 Maintain Users</h3>
+                        <p>Manage user accounts and memberships</p>
+                        <button class="btn btn-primary" onclick="showPage('maintainUser')">User Management</button>
+                    </div>
+                    <div class="card">
+                        <h3>🏪 Maintain Vendors</h3>
+                        <p>Manage vendor accounts and memberships</p>
+                        <button class="btn btn-secondary" onclick="showPage('maintainVendor')">Vendor Management</button>
+                    </div>
+                    <div class="card">
+                        <h3>📊 Reports</h3>
+                        <p>View system reports and analytics</p>
+                        <button class="btn btn-primary" onclick="showPage('reports')">View Reports</button>
+                    </div>
+                    <div class="card">
+                        <h3>💰 Transactions</h3>
+                        <p>Monitor all system transactions</p>
+                        <button class="btn btn-secondary" onclick="showPage('transactions')">View Transactions</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAINTAIN USER -->
+            <div id="maintainUser" class="page">
+                <h2>👥 User Management</h2>
+                <div class="nav-menu">
+                    <button class="nav-btn" onclick="showTab('addUser')">Add User</button>
+                    <button class="nav-btn" onclick="showTab('updateUser')">Update User</button>
+                    <button class="nav-btn" onclick="showTab('addMembership')">Add Membership</button>
+                    <button class="nav-btn" onclick="showTab('updateMembership')">Update Membership</button>
+                </div>
+
+                <div id="addUser" class="tab-content" style="display: block;">
+                    <h3>Add New User</h3>
+                    <form onsubmit="handleAddUser(event)">
+                        <div class="form-group">
+                            <label>Name:</label>
+                            <input type="text" id="newUserName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="newUserEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password:</label>
+                            <input type="password" id="newUserPassword" required>
+                        </div>
+                        <button type="submit" class="form-btn">Add User</button>
+                    </form>
+                </div>
+
+                <div id="addMembership" class="tab-content">
+                    <h3>Add Membership</h3>
+                    <form onsubmit="handleAddMembership(event)">
+                        <div class="form-group">
+                            <label>User Email:</label>
+                            <input type="email" id="membershipEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Membership Duration:</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="duration6" name="duration" value="6" checked>
+                                    <label for="duration6">6 Months</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="duration12" name="duration" value="12">
+                                    <label for="duration12">1 Year</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="duration24" name="duration" value="24">
+                                    <label for="duration24">2 Years</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="form-btn">Add Membership</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- VENDOR LOGIN -->
+            <div id="vendorLogin" class="page">
+                <h2>🏪 Vendor Login</h2>
+                <form onsubmit="handleVendorLogin(event)">
+                    <div class="form-group">
+                        <label for="vendorEmail">Email:</label>
+                        <input type="email" id="vendorEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="vendorPassword">Password:</label>
+                        <input type="password" id="vendorPassword" required>
+                    </div>
+                    <button type="submit" class="form-btn">Login</button>
+                    <div id="vendorLoginError" class="error"></div>
+                </form>
+            </div>
+
+            <!-- VENDOR SIGNUP -->
+            <div id="vendorSignup" class="page">
+                <h2>🏪 Vendor Registration</h2>
+                <form onsubmit="handleVendorSignup(event)">
+                    <div class="form-group">
+                        <label for="vendorSignupName">Name:</label>
+                        <input type="text" id="vendorSignupName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="vendorSignupEmail">Email:</label>
+                        <input type="email" id="vendorSignupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="vendorSignupPassword">Password:</label>
+                        <input type="password" id="vendorSignupPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="vendorCategory">Category:</label>
+                        <select id="vendorCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="catering">Catering</option>
+                            <option value="florist">Florist</option>
+                            <option value="decoration">Decoration</option>
+                            <option value="lighting">Lighting</option>
+                            <option value="photography">Photography</option>
+                            <option value="music">Music & Entertainment</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="form-btn">Register</button>
+                    <div id="vendorSignupError" class="error"></div>
+                </form>
+            </div>
+
+            <!-- VENDOR HOME -->
+            <div id="vendorHome" class="page">
+                <h2>🏪 Vendor Dashboard</h2>
+                <div class="card-grid">
+                    <div class="card">
+                        <h3>📦 Your Items</h3>
+                        <p>View and manage your products</p>
+                        <button class="btn btn-primary" onclick="showPage('vendorProducts')">View Products</button>
+                    </div>
+                    <div class="card">
+                        <h3>➕ Add New Item</h3>
+                        <p>Add new products to your inventory</p>
+                        <button class="btn btn-secondary" onclick="showPage('vendorAddItem')">Add Item</button>
+                    </div>
+                    <div class="card">
+                        <h3>💰 Transactions</h3>
+                        <p>View your transaction history</p>
+                        <button class="btn btn-primary" onclick="showPage('vendorTransactions')">View Transactions</button>
+                    </div>
+                    <div class="card">
+                        <h3>📋 Product Status</h3>
+                        <p>Check status of your products</p>
+                        <button class="btn btn-secondary" onclick="showPage('vendorProductStatus')">Product Status</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VENDOR ADD ITEM -->
+            <div id="vendorAddItem" class="page">
+                <h2>➕ Add New Product</h2>
+                <form onsubmit="handleAddProduct(event)">
+                    <div class="form-group">
+                        <label for="productName">Product Name:</label>
+                        <input type="text" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Price (₹):</label>
+                        <input type="number" id="productPrice" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Description:</label>
+                        <textarea id="productDescription" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">Product Image:</label>
+                        <input type="file" id="productImage" accept="image/*">
+                    </div>
+                    <button type="submit" class="form-btn">Add Product</button>
+                    <button type="button" class="form-btn" onclick="previewProduct()">Preview Product</button>
+                    <div id="addProductError" class="error"></div>
+                    <div id="addProductSuccess" class="success"></div>
+                </form>
+            </div>
+
+            <!-- VENDOR PRODUCTS -->
+            <div id="vendorProducts" class="page">
+                <h2>📦 Your Products</h2>
+                <div id="vendorProductsList" class="card-grid">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+
+            <!-- VENDOR PRODUCT STATUS -->
+            <div id="vendorProductStatus" class="page">
+                <h2>📋 Product Status</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productStatusTable">
+                        <!-- Product status will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- USER LOGIN -->
+            <div id="userLogin" class="page">
+                <h2>👤 User Login</h2>
+                <form onsubmit="handleUserLogin(event)">
+                    <div class="form-group">
+                        <label for="userLoginEmail">Email:</label>
+                        <input type="email" id="userLoginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userLoginPassword">Password:</label>
+                        <input type="password" id="userLoginPassword" required>
+                    </div>
+                    <button type="submit" class="form-btn">Login</button>
+                    <div id="userLoginError" class="error"></div>
+                </form>
+            </div>
+
+            <!-- USER SIGNUP -->
+            <div id="userSignup" class="page">
+                <h2>👤 User Registration</h2>
+                <form onsubmit="handleUserSignup(event)">
+                    <div class="form-group">
+                        <label for="userSignupName">Full Name:</label>
+                        <input type="text" id="userSignupName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userSignupEmail">Email:</label>
+                        <input type="email" id="userSignupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userSignupPassword">Password:</label>
+                        <input type="password" id="userSignupPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userSignupPhone">Phone Number:</label>
+                        <input type="tel" id="userSignupPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userSignupAddress">Address:</label>
+                        <textarea id="userSignupAddress" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="form-btn">Register</button>
+                    <div id="userSignupError" class="error"></div>
+                </form>
+            </div>
+
+            <!-- USER HOME -->
+            <div id="userHome" class="page">
+                <h2>👤 User Dashboard</h2>
+                <div class="card-grid">
+                    <div class="card">
+                        <h3>🏪 Choose Vendor</h3>
+                        <p>Browse and select vendors for your event</p>
+                        <button class="btn btn-primary" onclick="showPage('chooseVendor')">Browse Vendors</button>
+                    </div>
+                    <div class="card">
+                        <h3>🛒 Shopping Cart</h3>
+                        <p>View items in your cart</p>
+                        <button class="btn btn-secondary" onclick="showPage('cart')">View Cart (<span id="cartCount">0</span>)</button>
+                    </div>
+                    <div class="card">
+                        <h3>👥 Guest List</h3>
+                        <p>Manage your event guest list</p>
+                        <button class="btn btn-primary" onclick="showPage('guestList')">Manage Guests</button>
+                    </div>
+                    <div class="card">
+                        <h3>📋 Order Status</h3>
+                        <p>Track your current and past orders</p>
+                        <button class="btn btn-secondary" onclick="showPage('orderStatus')">View Orders</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHOOSE VENDOR -->
+            <div id="chooseVendor" class="page">
+                <h2>🏪 Choose Vendor</h2>
+                <div id="vendorsList" class="card-grid">
+                    <!-- Vendors will be loaded here -->
+                </div>
+            </div>
+
+            <!-- VENDOR PRODUCTS FOR USER -->
+            <div id="vendorProductsForUser" class="page">
+                <h2 id="selectedVendorName">Vendor Products</h2>
+                <div id="userVendorProductsList" class="card-grid">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+
+            <!-- CART -->
+            <div id="cart" class="page">
+                <h2>🛒 Shopping Cart</h2>
+                <div id="cartItems">
+                    <!-- Cart items will be loaded here -->
+                </div>
+                <div id="cartTotal" class="card">
+                    <h3>Total: ₹<span id="totalAmount">0</span></h3>
+                    <button class="btn btn-primary" onclick="proceedToCheckout()" id="checkoutBtn" disabled>Proceed to Checkout</button>
+                </div>
+            </div>
+
+            <!-- CHECKOUT -->
+            <div id="checkout" class="page">
+                <h2>💳 Checkout</h2>
+                <div class="card">
+                    <h3>Order Summary</h3>
+                    <div id="checkoutItems"></div>
+                    <div class="form-group">
+                        <label>Payment Method:</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="paymentCard" name="payment" value="card" checked>
+                                <label for="paymentCard">Credit/Debit Card</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="paymentUPI" name="payment" value="upi">
+                                <label for="paymentUPI">UPI</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="paymentCash" name="payment" value="cash">
+                                <label for="paymentCash">Cash on Delivery</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="processPayment()">Complete Payment</button>
+                </div>
+            </div>
+
+            <!-- GUEST LIST -->
+            <div id="guestList" class="page">
+                <h2>👥 Guest List Management</h2>
+                <div class="card">
+                    <h3>Add Guest</h3>
+                    <form onsubmit="handleAddGuest(event)">
+                        <div class="form-group">
+                            <label for="guestName">Guest Name:</label>
+                            <input type="text" id="guestName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="guestEmail">Email:</label>
+                            <input type="email" id="guestEmail">
+                        </div>
+                        <div class="form-group">
+                            <label for="guestPhone">Phone:</label>
+                            <input type="tel" id="guestPhone">
+                        </div>
+                        <div class="form-group">
+                            <label>RSVP Status:</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="guestConfirmed">
+                                    <label for="guestConfirmed">Confirmed</label>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="form-btn">Add Guest</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h3>Guest List</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>RSVP</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guestListTable">
+                            <!-- Guests will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ORDER STATUS -->
+            <div id="orderStatus" class="page">
+                <h2>📋 Order Status</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderStatusTable">
+                        <!-- Orders will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- REPORTS (Admin/User accessible) -->
+            <div id="reports" class="page">
+                <h2>📊 Reports</h2>
+                <div class="card-grid">
+                    <div class="card">
+                        <h3>📈 Sales Report</h3>
+                        <p>Total Sales: ₹<span id="totalSales">0</span></p>
+                        <p>Total Orders: <span id="totalOrders">0</span></p>
+                    </div>
+                    <div class="card">
+                        <h3>👥 User Analytics</h3>
+                        <p>Total Users: <span id="totalUsers">0</span></p>
+                        <p>Active Users: <span id="activeUsers">0</span></p>
+                    </div>
+                    <div class="card">
+                        <h3>🏪 Vendor Analytics</h3>
+                        <p>Total Vendors: <span id="totalVendors">0</span></p>
+                        <p>Active Vendors: <span id="activeVendors">0</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRANSACTIONS -->
+            <div id="transactions" class="page">
+                <h2>💰 Transactions</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Transaction ID</th>
+                            <th>Date</th>
+                            <th>User</th>
+                            <th>Vendor</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTable">
+                        <!-- Transactions will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUCCESS POPUP -->
+    <div id="successPopup" class="popup">
+        <div class="popup-content">
+            <h3>🎉 Success!</h3>
+            <p id="successMessage">Operation completed successfully!</p>
+            <button class="btn btn-primary" onclick="closePopup('successPopup')">OK</button>
+        </div>
+    </div>
+
+    <!-- PREVIEW POPUP -->
+    <div id="previewPopup" class="popup">
+        <div class="popup-content">
+            <h3>Product Preview</h3>
+            <div id="previewContent"></div>
+            <button class="btn btn-secondary" onclick="closePopup('previewPopup')">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let currentUserType = null;
+        let cart = [];
+        let guestList = [];
+        let orders = [];
+        let products = [];
+        let vendors = [];
+        let users = [];
+        let memberships = [];
+        let transactions = [];
+
+        // Initialize sample data
+        function initializeData() {
+            // Sample admin
+            users.push({
+                id: 'admin',
+                name: 'Admin',
+                email: 'admin@event.com',
+                password: 'admin123',
+                type: 'admin'
+            });
+
+            // Sample vendors
+            vendors.push(
+                {
+                    id: 'v1',
+                    name: 'Royal Caterers',
+                    email: 'royal@catering.com',
+                    password: 'vendor123',
+                    category: 'catering'
+                },
+                {
+                    id: 'v2',
+                    name: 'Flower Paradise',
+                    email: 'flowers@paradise.com',
+                    password: 'vendor123',
+                    category: 'florist'
+                }
+            );
+
+            // Sample products
+            products.push(
+                {
+                    id: 'p1',
+                    name: 'Wedding Catering Package',
+                    price: 50000,
+                    description: 'Complete wedding catering for 100 guests',
+                    vendorId: 'v1',
+                    status: 'active'
+                },
+                {
+                    id: 'p2',
+                    name: 'Bridal Bouquet',
+                    price: 2500,
+                    description: 'Beautiful bridal bouquet with roses',
+                    vendorId: 'v2',
+                    status: 'active'
+                }
+            );
+
+            // Sample user
+            users.push({
+                id: 'u1',
+                name: 'John Doe',
+                email: 'john@user.com',
+                password: 'user123',
+                type: 'user',
+                phone: '9876543210',
+                address: '123 Main St, City'
+            });
+        }
+
+        // Page navigation functions
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Update navigation
+            updateNavigation(pageId);
+
+            // Load page-specific content
+            loadPageContent(pageId);
+        }
+
+        function updateNavigation(pageId) {
+            const homeLink = document.getElementById('homeLink');
+            const logoutLink = document.getElementById('logoutLink');
+
+            if (currentUser) {
+                homeLink.textContent = getHomePage();
+                homeLink.onclick = () => showPage(getHomePage());
+                logoutLink.style.display = 'inline-block';
+            } else {
+                homeLink.textContent = 'Home';
+                homeLink.onclick = () => showPage('index');
+                logoutLink.style.display = 'none';
+            }
+        }
+
+        function getHomePage() {
+            if (!currentUser) return 'index';
+            
+            switch (currentUserType) {
+                case 'admin': return 'adminHome';
+                case 'vendor': return 'vendorHome';
+                case 'user': return 'userHome';
+                default: return 'index';
+            }
+        }
+
+        function loadPageContent(pageId) {
+            switch (pageId) {
+                case 'chooseVendor':
+                    loadVendorsForUser();
+                    break;
+                case 'cart':
+                    loadCart();
+                    break;
+                case 'vendorProducts':
+                    loadVendorProducts();
+                    break;
+                case 'vendorProductStatus':
+                    loadVendorProductStatus();
+                    break;
+                case 'guestList':
+                    loadGuestList();
+                    break;
+                case 'orderStatus':
+                    loadOrderStatus();
+                    break;
+                case 'reports':
+                    loadReports();
+                    break;
+                case 'transactions':
+                    loadTransactions();
+                    break;
+            }
+        }
+
+        // Authentication functions
+        function handleAdminLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            const admin = users.find(u => u.email === email && u.password === password && u.type === 'admin');
+            
+            if (admin) {
+                currentUser = admin;
+                currentUserType = 'admin';
+                showPage('adminHome');
+                showSuccess('Admin login successful!');
+            } else {
+                document.getElementById('adminLoginError').textContent = 'Invalid credentials';
+            }
+        }
+
+        function handleVendorLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('vendorEmail').value;
+            const password = document.getElementById('vendorPassword').value;
+            
+            const vendor = vendors.find(v => v.email === email && v.password === password);
+            
+            if (vendor) {
+                currentUser = vendor;
+                currentUserType = 'vendor';
+                showPage('vendorHome');
+                showSuccess('Vendor login successful!');
+            } else {
+                document.getElementById('vendorLoginError').textContent = 'Invalid credentials';
+            }
+        }
+
+        function handleVendorSignup(event) {
+            event.preventDefault();
+            const name = document.getElementById('vendorSignupName').value;
+            const email = document.getElementById('vendorSignupEmail').value;
+            const password = document.getElementById('vendorSignupPassword').value;
+            const category = document.getElementById('vendorCategory').value;
+            
+            // Check if email already exists
+            if (vendors.find(v => v.email === email)) {
+                document.getElementById('vendorSignupError').textContent = 'Email already exists';
+                return;
+            }
+            
+            const newVendor = {
+                id: 'v' + (vendors.length + 1),
+                name,
+                email,
+                password,
+                category
+            };
+            
+            vendors.push(newVendor);
+            showSuccess('Vendor registration successful! Please login.');
+            showPage('vendorLogin');
+        }
+
+        function handleUserLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('userLoginEmail').value;
+            const password = document.getElementById('userLoginPassword').value;
+            
+            const user = users.find(u => u.email === email && u.password === password && u.type === 'user');
+            
+            if (user) {
+                currentUser = user;
+                currentUserType = 'user';
+                showPage('userHome');
+                showSuccess('User login successful!');
+            } else {
+                document.getElementById('userLoginError').textContent = 'Invalid credentials';
+            }
+        }
+
+        function handleUserSignup(event) {
+            event.preventDefault();
+            const name = document.getElementById('userSignupName').value;
+            const email = document.getElementById('userSignupEmail').value;
+            const password = document.getElementById('userSignupPassword').value;
+            const phone = document.getElementById('userSignupPhone').value;
+            const address = document.getElementById('userSignupAddress').value;
+            
+            // Check if email already exists
+            if (users.find(u => u.email === email)) {
+                document.getElementById('userSignupError').textContent = 'Email already exists';
+                return;
+            }
+            
+            const newUser = {
+                id: 'u' + (users.length + 1),
+                name,
+                email,
+                password,
+                phone,
+                address,
+                type: 'user'
+            };
+            
+            users.push(newUser);
+            showSuccess('User registration successful! Please login.');
+            showPage('userLogin');
+        }
+
+        function logout() {
+            currentUser = null;
+            currentUserType = null;
+            cart = [];
+            showPage('index');
+            showSuccess('Logged out successfully!');
+        }
+
+        // Admin functions
+        function handleAddUser(event) {
+            event.preventDefault();
+            const name = document.getElementById('newUserName').value;
+            const email = document.getElementById('newUserEmail').value;
+            const password = document.getElementById('newUserPassword').value;
+            
+            if (users.find(u => u.email === email)) {
+                alert('Email already exists');
+                return;
+            }
+            
+            const newUser = {
+                id: 'u' + (users.length + 1),
+                name,
+                email,
+                password,
+                type: 'user'
+            };
+            
+            users.push(newUser);
+            showSuccess('User added successfully!');
+            event.target.reset();
+        }
+
+        function handleAddMembership(event) {
+            event.preventDefault();
+            const email = document.getElementById('membershipEmail').value;
+            const duration = document.querySelector('input[name="duration"]:checked').value;
+            
+            const user = users.find(u => u.email === email);
+            if (!user) {
+                alert('User not found');
+                return;
+            }
+            
+            const membership = {
+                id: 'm' + (memberships.length + 1),
+                userId: user.id,
+                duration: parseInt(duration),
+                startDate: new Date(),
+                status: 'active'
+            };
+            
+            memberships.push(membership);
+            showSuccess(`${duration}-month membership added for ${user.name}!`);
+            event.target.reset();
+        }
+
+        function showTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).style.display = 'block';
+        }
+
+        // Vendor functions
+        function handleAddProduct(event) {
+            event.preventDefault();
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const description = document.getElementById('productDescription').value;
+            
+            const newProduct = {
+                id: 'p' + (products.length + 1),
+                name,
+                price,
+                description,
+                vendorId: currentUser.id,
+                status: 'active'
+            };
+            
+            products.push(newProduct);
+            showSuccess('Product added successfully!');
+            event.target.reset();
+        }
+
+        function previewProduct() {
+            const name = document.getElementById('productName').value;
+            const price = document.getElementById('productPrice').value;
+            const description = document.getElementById('productDescription').value;
+            
+            if (!name || !price) {
+                alert('Please fill in product name and price');
+                return;
+            }
+            
+            const previewContent = `
+                <div class="product-card">
+                    <div class="product-image">📦</div>
+                    <h4>${name}</h4>
+                    <p>₹${price}</p>
+                    <p>${description}</p>
+                </div>
+            `;
+            
+            document.getElementById('previewContent').innerHTML = previewContent;
+            document.getElementById('previewPopup').classList.add('show');
+        }
+
+        function loadVendorProducts() {
+            const vendorProducts = products.filter(p => p.vendorId === currentUser.id);
+            const container = document.getElementById('vendorProductsList');
+            
+            if (vendorProducts.length === 0) {
+                container.innerHTML = '<p>No products added yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = vendorProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">📦</div>
+                    <h4>${product.name}</h4>
+                    <p>₹${product.price}</p>
+                    <p>${product.description}</p>
+                    <button class="btn btn-secondary" onclick="editProduct('${product.id}')">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteProduct('${product.id}')">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function loadVendorProductStatus() {
+            const vendorProducts = products.filter(p => p.vendorId === currentUser.id);
+            const tbody = document.getElementById('productStatusTable');
+            
+            tbody.innerHTML = vendorProducts.map(product => `
+                <tr>
+                    <td>${product.name}</td>
+                    <td>₹${product.price}</td>
+                    <td><span class="status-${product.status}">${product.status}</span></td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="updateProductStatus('${product.id}')">Update</button>
+                        <button class="btn btn-danger" onclick="deleteProduct('${product.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                const index = products.findIndex(p => p.id === productId);
+                if (index > -1) {
+                    products.splice(index, 1);
+                    showSuccess('Product deleted successfully!');
+                    loadVendorProducts();
+                    loadVendorProductStatus();
+                }
+            }
+        }
+
+        // User functions
+        function loadVendorsForUser() {
+            const container = document.getElementById('vendorsList');
+            
+            container.innerHTML = vendors.map(vendor => `
+                <div class="card">
+                    <h3>🏪 ${vendor.name}</h3>
+                    <p>Category: ${vendor.category}</p>
+                    <button class="btn btn-primary" onclick="viewVendorProducts('${vendor.id}', '${vendor.name}')">
+                        View Products
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function viewVendorProducts(vendorId, vendorName) {
+            const vendorProducts = products.filter(p => p.vendorId === vendorId && p.status === 'active');
+            const container = document.getElementById('userVendorProductsList');
+            
+            document.getElementById('selectedVendorName').textContent = `${vendorName} - Products`;
+            
+            container.innerHTML = vendorProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">📦</div>
+                    <h4>${product.name}</h4>
+                    <p>₹${product.price}</p>
+                    <p>${product.description}</p>
+                    <button class="btn btn-primary" onclick="addToCart('${product.id}')">Add to Cart</button>
+                </div>
+            `).join('');
+            
+            showPage('vendorProductsForUser');
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                const existingItem = cart.find(item => item.productId === productId);
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        productId: productId,
+                        name: product.name,
+                        price: product.price,
+                        quantity: 1
+                    });
+                }
+                updateCartCount();
+                showSuccess('Item added to cart!');
+            }
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        function loadCart() {
+            const container = document.getElementById('cartItems');
+            const totalElement = document.getElementById('totalAmount');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<p>Your cart is empty.</p>';
+                totalElement.textContent = '0';
+                checkoutBtn.disabled = true;
+                return;
+            }
+            
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                return `
+                    <div class="cart-item">
+                        <div>
+                            <h4>${item.name}</h4>
+                            <p>₹${item.price} x ${item.quantity} = ₹${itemTotal}</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-secondary" onclick="updateCartQuantity('${item.productId}', -1)">-</button>
+                            <span style="margin: 0 10px;">${item.quantity}</span>
+                            <button class="btn btn-secondary" onclick="updateCartQuantity('${item.productId}', 1)">+</button>
+                            <button class="btn btn-danger" onclick="removeFromCart('${item.productId}')">Remove</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            totalElement.textContent = total;
+            checkoutBtn.disabled = false;
+        }
+
+        function updateCartQuantity(productId, change) {
+            const item = cart.find(item => item.productId === productId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(productId);
+                } else {
+                    loadCart();
+                    updateCartCount();
+                }
+            }
+        }
+
+        function removeFromCart(productId) {
+            const index = cart.findIndex(item => item.productId === productId);
+            if (index > -1) {
+                cart.splice(index, 1);
+                loadCart();
+                updateCartCount();
+                showSuccess('Item removed from cart!');
+            }
+        }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            const container = document.getElementById('checkoutItems');
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            container.innerHTML = `
+                <div class="cart-summary">
+                    ${cart.map(item => `
+                        <div class="cart-item">
+                            <span>${item.name} x ${item.quantity}</span>
+                            <span>₹${item.price * item.quantity}</span>
+                        </div>
+                    `).join('')}
+                    <div class="cart-total">
+                        <strong>Total: ₹${total}</strong>
+                    </div>
+                </div>
+            `;
+            
+            showPage('checkout');
+        }
+
+        function processPayment() {
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Create order
+            const order = {
+                id: 'ord' + (orders.length + 1),
+                userId: currentUser.id,
+                items: [...cart],
+                total: total,
+                paymentMethod: paymentMethod,
+                status: 'confirmed',
+                date: new Date().toLocaleDateString()
+            };
+            
+            orders.push(order);
+            
+            // Create transaction
+            const transaction = {
+                id: 'txn' + (transactions.length + 1),
+                orderId: order.id,
+                userId: currentUser.id,
+                amount: total,
+                paymentMethod: paymentMethod,
+                status: 'completed',
+                date: new Date().toLocaleDateString()
+            };
+            
+            transactions.push(transaction);
+            
+            // Clear cart
+            cart = [];
+            updateCartCount();
+            
+            // Show success
+            showSuccess('Payment successful! Your order has been confirmed.');
+            showPage('userHome');
+        }
+
+        // Guest List functions
+        function handleAddGuest(event) {
+            event.preventDefault();
+            const name = document.getElementById('guestName').value;
+            const email = document.getElementById('guestEmail').value;
+            const phone = document.getElementById('guestPhone').value;
+            const confirmed = document.getElementById('guestConfirmed').checked;
+            
+            const guest = {
+                id: 'g' + (guestList.length + 1),
+                name,
+                email,
+                phone,
+                confirmed,
+                userId: currentUser.id
+            };
+            
+            guestList.push(guest);
+            loadGuestList();
+            event.target.reset();
+            showSuccess('Guest added successfully!');
+        }
+
+        function loadGuestList() {
+            const userGuests = guestList.filter(g => g.userId === currentUser.id);
+            const tbody = document.getElementById('guestListTable');
+            
+            tbody.innerHTML = userGuests.map(guest => `
+                <tr>
+                    <td>${guest.name}</td>
+                    <td>${guest.email || 'N/A'}</td>
+                    <td>${guest.phone || 'N/A'}</td>
+                    <td>${guest.confirmed ? '✅ Yes' : '❌ No'}</td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="editGuest('${guest.id}')">Edit</button>
+                        <button class="btn btn-danger" onclick="deleteGuest('${guest.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteGuest(guestId) {
+            if (confirm('Are you sure you want to remove this guest?')) {
+                const index = guestList.findIndex(g => g.id === guestId);
+                if (index > -1) {
+                    guestList.splice(index, 1);
+                    loadGuestList();
+                    showSuccess('Guest removed successfully!');
+                }
+            }
+        }
+
+        function loadOrderStatus() {
+            const userOrders = orders.filter(o => o.userId === currentUser.id);
+            const tbody = document.getElementById('orderStatusTable');
+            
+            if (userOrders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No orders found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = userOrders.map(order => `
+                <tr>
+                    <td>${order.id}</td>
+                    <td>${order.date}</td>
+                    <td>${order.items.length} items</td>
+                    <td>₹${order.total}</td>
+                    <td><span class="status-${order.status}">${order.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Reports and Analytics
+        function loadReports() {
+            const totalSales = transactions.reduce((sum, t) => sum + t.amount, 0);
+            const totalOrders = orders.length;
+            const totalUsers = users.filter(u => u.type === 'user').length;
+            const activeUsers = users.filter(u => u.type === 'user').length; // Simplified
+            const totalVendors = vendors.length;
+            const activeVendors = vendors.length; // Simplified
+            
+            document.getElementById('totalSales').textContent = totalSales;
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('activeUsers').textContent = activeUsers;
+            document.getElementById('totalVendors').textContent = totalVendors;
+            document.getElementById('activeVendors').textContent = activeVendors;
+        }
+
+        function loadTransactions() {
+            const tbody = document.getElementById('transactionsTable');
+            
+            if (transactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No transactions found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = transactions.map(transaction => {
+                const user = users.find(u => u.id === transaction.userId);
+                const order = orders.find(o => o.id === transaction.orderId);
+                let vendor = 'Multiple';
+                
+                if (order && order.items.length === 1) {
+                    const product = products.find(p => p.id === order.items[0].productId);
+                    if (product) {
+                        const vendorObj = vendors.find(v => v.id === product.vendorId);
+                        if (vendorObj) vendor = vendorObj.name;
+                    }
+                }
+                
+                return `
+                    <tr>
+                        <td>${transaction.id}</td>
+                        <td>${transaction.date}</td>
+                        <td>${user ? user.name : 'Unknown'}</td>
+                        <td>${vendor}</td>
+                        <td>₹${transaction.amount}</td>
+                        <td><span class="status-${transaction.status}">${transaction.status}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Utility functions
+        function showSuccess(message) {
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successPopup').classList.add('show');
+            setTimeout(() => {
+                closePopup('successPopup');
+            }, 3000);
+        }
+
+        function closePopup(popupId) {
+            document.getElementById(popupId).classList.remove('show');
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 6;
+        }
+
+        // Enhanced form validation
+        function addFormValidation() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+                    let isValid = true;
+                    
+                    inputs.forEach(input => {
+                        if (!input.value.trim()) {
+                            isValid = false;
+                            input.style.borderColor = '#f44336';
+                            showFieldError(input, 'This field is required');
+                        } else {
+                            input.style.borderColor = '#ddd';
+                            clearFieldError(input);
+                            
+                            // Additional validation based on input type
+                            if (input.type === 'email' && !validateEmail(input.value)) {
+                                isValid = false;
+                                input.style.borderColor = '#f44336';
+                                showFieldError(input, 'Please enter a valid email address');
+                            }
+                            
+                            if (input.type === 'password' && !validatePassword(input.value)) {
+                                isValid = false;
+                                input.style.borderColor = '#f44336';
+                                showFieldError(input, 'Password must be at least 6 characters long');
+                            }
+                        }
+                    });
+                    
+                    if (!isValid) {
+                        e.preventDefault();
+                    }
+                });
+                
+                // Real-time validation
+                const inputs = form.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.addEventListener('blur', function() {
+                        if (this.hasAttribute('required') && !this.value.trim()) {
+                            this.style.borderColor = '#f44336';
+                            showFieldError(this, 'This field is required');
+                        } else {
+                            this.style.borderColor = '#ddd';
+                            clearFieldError(this);
+                        }
+                    });
+                    
+                    input.addEventListener('input', function() {
+                        if (this.style.borderColor === 'rgb(244, 67, 54)') {
+                            this.style.borderColor = '#ddd';
+                            clearFieldError(this);
+                        }
+                    });
+                });
+            });
+        }
+
+        function showFieldError(input, message) {
+            clearFieldError(input);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error field-error';
+            errorDiv.textContent = message;
+            input.parentNode.appendChild(errorDiv);
+        }
+
+        function clearFieldError(input) {
+            const existingError = input.parentNode.querySelector('.field-error');
+            if (existingError) {
+                existingError.remove();
+            }
+        }
+
+        // Session Management
+        function saveSession() {
+            const sessionData = {
+                currentUser,
+                currentUserType,
+                cart,
+                guestList,
+                orders,
+                products,
+                vendors,
+                users,
+                memberships,
+                transactions
+            };
+            
+            // In a real application, this would be saved to a secure backend
+            // For demo purposes, we're just keeping it in memory
+            window.sessionData = sessionData;
+        }
+
+        function loadSession() {
+            if (window.sessionData) {
+                const data = window.sessionData;
+                currentUser = data.currentUser;
+                currentUserType = data.currentUserType;
+                cart = data.cart || [];
+                guestList = data.guestList || [];
+                orders = data.orders || [];
+                products = data.products || [];
+                vendors = data.vendors || [];
+                users = data.users || [];
+                memberships = data.memberships || [];
+                transactions = data.transactions || [];
+                
+                updateCartCount();
+                
+                if (currentUser) {
+                    showPage(getHomePage());
+                }
+            }
+        }
+
+        // Enhanced mobile responsiveness
+        function handleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                navMenu.style.flexDirection = 'column';
+                navMenu.style.gap = '10px';
+            } else {
+                navMenu.style.flexDirection = 'row';
+                navMenu.style.gap = '15px';
+            }
+        }
+
+        // Keyboard navigation support
+        function addKeyboardNavigation() {
+            document.addEventListener('keydown', function(e) {
+                // Escape key closes popups
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.popup.show').forEach(popup => {
+                        popup.classList.remove('show');
+                    });
+                }
+                
+                // Enter key on buttons
+                if (e.key === 'Enter' && e.target.tagName === 'BUTTON') {
+                    e.target.click();
+                }
+            });
+        }
+
+        // Enhanced accessibility
+        function addAccessibilityFeatures() {
+            // Add ARIA labels to form controls
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                const label = input.parentNode.querySelector('label');
+                if (label && !input.hasAttribute('aria-label')) {
+                    input.setAttribute('aria-label', label.textContent);
+                }
+            });
+            
+            // Add role attributes
+            document.querySelectorAll('.btn').forEach(button => {
+                if (!button.hasAttribute('role')) {
+                    button.setAttribute('role', 'button');
+                }
+            });
+            
+            // Add navigation landmarks
+            document.querySelector('.header').setAttribute('role', 'banner');
+            document.querySelector('.main-content').setAttribute('role', 'main');
+        }
+
+        // Error handling
+        window.addEventListener('error', function(e) {
+            console.error('Application error:', e.error);
+            showError('An unexpected error occurred. Please try again.');
+        });
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #f44336;
+                color: white;
+                padding: 15px;
+                border-radius: 8px;
+                z-index: 1001;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            `;
+            errorDiv.textContent = message;
+            document.body.appendChild(errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        // Progressive Web App features
+        function addPWAFeatures() {
+            // Add to home screen prompt
+            let deferredPrompt;
+            
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Show install button (simplified)
+                console.log('PWA install available');
+            });
+        }
+
+        // Performance monitoring
+        function monitorPerformance() {
+            // Monitor page load times
+            window.addEventListener('load', function() {
+                const loadTime = performance.now();
+                console.log(`Page loaded in ${loadTime.toFixed(2)}ms`);
+            });
+            
+            // Monitor navigation performance
+            const observer = new PerformanceObserver((list) => {
+                list.getEntries().forEach((entry) => {
+                    console.log(`Navigation to ${entry.name} took ${entry.duration.toFixed(2)}ms`);
+                });
+            });
+            observer.observe({ entryTypes: ['navigation'] });
+        }
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize data and features
+            initializeData();
+            addFormValidation();
+            addKeyboardNavigation();
+            addAccessibilityFeatures();
+            addPWAFeatures();
+            monitorPerformance();
+            
+            // Load session if available
+            loadSession();
+            
+            // Handle window resize
+            window.addEventListener('resize', handleMobileMenu);
+            handleMobileMenu();
+            
+            // Auto-save session periodically
+            setInterval(saveSession, 30000); // Save every 30 seconds
+            
+            // Show initial page
+            if (!currentUser) {
+                showPage('index');
+            }
+            
+            console.log('Event Management System initialized successfully!');
+        });
+
+        // Additional utility functions for demo
+        function generateSampleData() {
+            // Generate more sample orders for demo
+            for (let i = 0; i < 5; i++) {
+                const sampleOrder = {
+                    id: 'ord_sample_' + i,
+                    userId: 'u1',
+                    items: [
+                        {
+                            productId: 'p1',
+                            name: 'Sample Product ' + i,
+                            price: Math.floor(Math.random() * 10000) + 1000,
+                            quantity: Math.floor(Math.random() * 3) + 1
+                        }
+                    ],
+                    total: Math.floor(Math.random() * 50000) + 5000,
+                    paymentMethod: ['card', 'upi', 'cash'][Math.floor(Math.random() * 3)],
+                    status: ['confirmed', 'processing', 'delivered'][Math.floor(Math.random() * 3)],
+                    date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString()
+                };
+                orders.push(sampleOrder);
+                
+                const sampleTransaction = {
+                    id: 'txn_sample_' + i,
+                    orderId: sampleOrder.id,
+                    userId: sampleOrder.userId,
+                    amount: sampleOrder.total,
+                    paymentMethod: sampleOrder.paymentMethod,
+                    status: 'completed',
+                    date: sampleOrder.date
+                };
+                transactions.push(sampleTransaction);
+            }
+        }
+
+        // Call this function to add more sample data for testing
+        setTimeout(generateSampleData, 1000);
+    </script>
+</body>
+</html>
